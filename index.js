@@ -6,6 +6,7 @@ module.exports.linter = Linter
 const os = require('os')
 const path = require('path')
 const pkgConf = require('pkg-conf')
+const globby = require('globby')
 const fs = require('fs')
 
 const CACHE_HOME = require('xdg-basedir').cache || os.tmpdir()
@@ -30,11 +31,16 @@ function Linter (opts) {
 
   if (!opts.cmd) throw new Error('opts.cmd option is required')
   if (!opts.eslint) throw new Error('opts.eslint option is required')
+  if (!opts.prettier) throw new Error('opts.prettier option is required')
 
   this.cmd = opts.cmd
   this.eslint = opts.eslint
+  this.prettier = opts.prettier
   this.cwd = opts.cwd || process.cwd()
   this.customParseOpts = opts.parseOpts
+  this.prettierConfig = {
+    configFile: opts.prettierConfig != null ? opts.prettierConfig.configFile : null
+  }
 
   const m = opts.version && opts.version.match(/^(\d+)\./)
   const majorVersion = (m && m[1]) || '0'
@@ -97,6 +103,7 @@ Linter.prototype.lintText = function (text, opts, cb) {
  * @param {Array.<string>=} opts.ignore   file globs to ignore (has sane defaults)
  * @param {string=} opts.cwd              current working directory (default: process.cwd())
  * @param {boolean=} opts.fix             automatically fix problems
+ * @param {boolean=} opts.format          aggressively format code for consistency
  * @param {Array.<string>=} opts.globals  custom global variables to declare
  * @param {Array.<string>=} opts.plugins  custom eslint plugins
  * @param {Array.<string>=} opts.envs     custom eslint environment
@@ -112,6 +119,35 @@ Linter.prototype.lintFiles = function (files, opts, cb) {
   if (typeof files === 'string') files = [files]
   if (files.length === 0) files = ['.']
 
+  if (opts.format) {
+    const extensionsArray = []
+    self.prettier.getSupportInfo().languages.forEach((language) => {
+      if (language != null && language.extensions != null) {
+        extensionsArray.push(...language.extensions)
+      }
+    })
+    const extensions = extensionsArray.join(',')
+    const prettierOptions = self.prettier.resolveConfig.sync(
+      this.prettierConfig.configFile,
+      { editorconfig: true }
+    ) || {}
+    const files = globby.sync([`**/*{${extensions}}`], {
+      ignore: opts.eslintConfig.ignorePattern,
+      cwd: opts.cwd
+    })
+    for (const file of files) {
+      const filePath = path.join(process.cwd(), file)
+      const fileInfo = self.prettier.getFileInfo.sync(filePath, {})
+      prettierOptions.parser = fileInfo.inferredParser
+      const input = fs.readFileSync(filePath, 'utf8')
+      const output = self.prettier.format(input, prettierOptions)
+      const formatted = input !== output
+      if (formatted) {
+        fs.writeFileSync(file, output)
+      }
+    }
+  }
+
   let result
   try {
     result = new self.eslint.CLIEngine(opts.eslintConfig).executeOnFiles(files)
@@ -119,7 +155,7 @@ Linter.prototype.lintFiles = function (files, opts, cb) {
     return cb(err)
   }
 
-  if (opts.fix) {
+  if (opts.fix || opts.format) {
     self.eslint.CLIEngine.outputFixes(result)
   }
 
@@ -136,6 +172,7 @@ Linter.prototype.parseOpts = function (opts) {
     gitIgnoreFile: ['.gitignore', '.git/info/exclude'],
     cwd: self.cwd,
     fix: false,
+    format: false,
     ignore: [],
     extensions: [],
     ...opts

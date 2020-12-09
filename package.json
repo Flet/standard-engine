@@ -39,6 +39,7 @@
   },
   "dependencies": {
     "get-stdin": "^8.0.0",
+    "globby": "^11.0.1",
     "minimist": "^1.2.5",
     "pkg-conf": "^3.1.0",
     "xdg-basedir": "^4.0.0"
@@ -52,6 +53,7 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-react": "^7.21.5",
+    "prettier": "^2.2.1",
     "standard": "*",
     "tape": "^5.0.1"
   },

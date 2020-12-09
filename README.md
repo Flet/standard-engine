@@ -42,8 +42,8 @@ Create the files below and fill in your own values for `options.js`.
 
 ```js
 // programmatic usage
-var Linter = require('standard-engine').linter
-var opts = require('./options.js')
+const Linter = require('standard-engine').linter
+const opts = require('./options.js')
 module.exports = new Linter(opts)
 ```
 
@@ -52,16 +52,17 @@ module.exports = new Linter(opts)
 ```js
 #!/usr/bin/env node
 
-var opts = require('../options.js')
+const opts = require('../options.js')
 require('standard-engine').cli(opts)
 ```
 
 ### `options.js`
 
 ```js
-var eslint = require('eslint')
-var path = require('path')
-var pkg = require('./package.json')
+const eslint = require('eslint')
+const prettier = require('prettier')
+const path = require('path')
+const pkg = require('./package.json')
 
 module.exports = {
   // homepage, version and bugs pulled from package.json
@@ -69,10 +70,14 @@ module.exports = {
   homepage: pkg.homepage,
   bugs: pkg.bugs.url,
   eslint: eslint, // pass any version of eslint >= 1.0.0
+  prettier: prettier, // pass any version of prettier >= 2.0.0
   cmd: 'pocketlint', // should match the "bin" key in your package.json
   tagline: 'Live by your own standards!', // displayed in output --help
   eslintConfig: {
-    configFile: path.join(__dirname, 'eslintrc.json')
+    configFile: path.join(__dirname, '.eslintrc.json')
+  },
+  prettierConfig: {
+   configFile: path.join(__dirname, '.prettierrc.json')
   },
   cwd: '' // current working directory, passed to eslint
 }
@@ -80,7 +85,7 @@ module.exports = {
 
 Additionally an optional `parseOpts()` function can be provided. See below for details.
 
-### `eslintrc.json`
+### `.eslintrc.json`
 
 Put all your .eslintrc rules in this file. A good practice is to create an  [ESLint Shareable Config](http://eslint.org/docs/developer-guide/shareable-configs) and extend it, but its not required:
 
@@ -164,7 +169,7 @@ a `ignore` property to `package.json`:
 Some files are ignored by default:
 
 ```js
-var DEFAULT_IGNORE = [
+const DEFAULT_IGNORE = [
   '*.min.js',
   'coverage/',
   'node_modules/',
@@ -279,9 +284,10 @@ install `babel-eslint` globally with `npm install babel-eslint -g`.
 You can provide a `parseOpts()` function in the `options.js` exports:
 
 ```js
-var eslint = require('eslint')
-var path = require('path')
-var pkg = require('./package.json')
+const eslint = require('eslint')
+const prettier = require('prettier')
+const path = require('path')
+const pkg = require('./package.json')
 
 module.exports = {
   // homepage, version and bugs pulled from package.json
@@ -289,10 +295,14 @@ module.exports = {
   homepage: pkg.homepage,
   bugs: pkg.bugs.url,
   eslint: eslint, // pass any version of eslint >= 1.0.0
+  prettier: prettier, // pass any version of prettier >= 2.0.0
   cmd: 'pocketlint', // should match the "bin" key in your package.json
   tagline: 'Live by your own standards!', // displayed in output --help
   eslintConfig: {
-    configFile: path.join(__dirname, 'eslintrc.json')
+    configFile: path.join(__dirname, '.eslintrc.json')
+  },
+  prettierConfig: {
+   configFile: path.join(__dirname, '.prettierrc.json')
   },
   parseOpts: function (opts, packageOpts, rootDir) {
     // provide implementation here, then return the opts object (or a new one)
@@ -310,6 +320,7 @@ The following options are provided in the `opts` object, and must be on the retu
 - `ignore`: array of file patterns (in `.gitignore` format) to ignore
 - `cwd`: string, the current working directory
 - `fix`: boolean, whether to automatically fix problems
+- `format`: boolean, whether to format with [prettier](https://prettier.io/) and fix problems
 - `eslintConfig`: object, the options passed to [ESLint's `CLIEngine`](http://eslint.org/docs/developer-guide/nodejs-api#cliengine)
 
 ## API Usage
@@ -346,7 +357,7 @@ The `callback` will be called with an `Error` and `results` object.
 The `results` object will contain the following properties:
 
 ```js
-var results = {
+const results = {
   results: [
     {
       filePath: '',
@@ -380,6 +391,7 @@ Lint the provided `files` globs. An `opts` object may be provided:
   // common to lintText and lintFiles
   cwd: '',              // current working directory (default: process.cwd())
   fix: false,           // automatically fix problems
+  format: false,        // aggressively format code for consistency
   extensions: [],       // file extensions to lint (has sane defaults)
   globals: [],          // custom global variables to declare
   plugins: [],          // custom eslint plugins
@@ -408,6 +420,7 @@ This is the full set of options accepted by the above APIs. Not all options make
   cwd: '',      // current working directory (default: process.cwd())
   filename: '', // path of the file containing the text being linted (optional)
   fix: false,   // automatically fix problems
+  format: false, // aggressively format code for consistency
   globals: [],  // custom global variables to declare
   plugins: [],  // custom eslint plugins
   envs: [],     // custom eslint environment
