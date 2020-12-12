@@ -11,7 +11,7 @@
 
 ## Overview
 
-Wrap your own eslint rules in a easy-to-use command line tool and/or a JS module.
+Wrap your own eslint and prettier rules in a easy-to-use command line tool and/or a JS module.
 
 ## Install
 
