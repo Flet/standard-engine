@@ -143,7 +143,7 @@ Linter.prototype.lintFiles = function (files, opts, cb) {
       const output = self.prettier.format(input, prettierOptions)
       const formatted = input !== output
       if (formatted) {
-        fs.writeFileSync(file, output)
+        fs.writeFileSync(filePath, output, { encoding: 'utf8' })
       }
     }
   }
