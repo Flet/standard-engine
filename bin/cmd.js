@@ -20,15 +20,13 @@ function Cli (opts) {
       global: 'globals',
       plugin: 'plugins',
       env: 'envs',
-      help: 'h',
-      verbose: 'v'
+      help: 'h'
     },
     boolean: [
       'fix',
       'format',
       'help',
       'stdin',
-      'verbose',
       'version'
     ],
     string: [
@@ -63,7 +61,6 @@ Usage:
 Flags:
         --fix       Automatically fix problems
         --format    Aggressively format code for consistency
-    -v, --verbose   Show rule names for errors (to ignore specific rules)
         --version   Show current version
     -h, --help      Show usage information
 
@@ -164,8 +161,8 @@ Flags (advanced):
           message.line || 0,
           message.column || 0,
           message.message,
-          argv.verbose ? ' (' + message.ruleId + ')' : '',
-          argv.verbose && message.severity === 1 ? ' (warning)' : ''
+          ' (' + message.ruleId + ')',
+          message.severity === 1 ? ' (warning)' : ''
         )
       })
     })

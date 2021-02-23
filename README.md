@@ -1,7 +1,7 @@
-# standard-engine [![travis][travis-image]][travis-url] [![npm][npm-image]][npm-url] [![downloads][downloads-image]][downloads-url] [![javascript style guide][standard-image]][standard-url]
+# standard-engine [![Tests CI][ci-image]][ci-url] [![npm][npm-image]][npm-url] [![downloads][downloads-image]][downloads-url] [![javascript style guide][standard-image]][standard-url]
 
-[travis-image]: https://img.shields.io/travis/standard/standard-engine/master.svg
-[travis-url]: https://travis-ci.org/standard/standard-engine
+[ci-image]: https://github.com/standard/standard-engine/workflows/tests/badge.svg?branch=master
+[ci-url]: https://github.com/standard/standard-engine/actions?query=workflow%3A%22tests%22
 [npm-image]: https://img.shields.io/npm/v/standard-engine.svg
 [npm-url]: https://npmjs.org/package/standard-engine
 [downloads-image]: https://img.shields.io/npm/dm/standard-engine.svg
@@ -181,16 +181,7 @@ You can disable these default ignores by setting the `noDefaultIgnore` option to
 
 ### Hiding Warnings
 
-Since `standard-engine` uses [`eslint`](http://eslint.org/) under-the-hood, you can
-hide warnings as you normally would if you used `eslint` directly.
-
-To get verbose output (so you can find the particular rule name to ignore), run:
-
-```bash
-$ pocketlint --verbose
-Error: Live by your own standards!
-  routes/error.js:20:36: 'file' was used before it was defined. (no-use-before-define)
-```
+Since `standard-engine` uses [`eslint`](http://eslint.org/) under-the-hood, you can hide warnings as you normally would if you used `eslint` directly.
 
 Disable **all rules** on a specific line:
 
