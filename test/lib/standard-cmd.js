@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import path from 'node:path'
 import eslint from 'eslint'
-import { Cli } from '../../index.js'
+import { Cli } from '../../bin/cmd.js'
 import { fileURLToPath } from 'node:url'
 
 const __filename = fileURLToPath(import.meta.url)
