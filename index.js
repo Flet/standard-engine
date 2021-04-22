@@ -6,7 +6,7 @@ import pkgConf from 'pkg-conf'
 import { cache as xdgCache } from 'xdg-basedir'
 import fs from 'node:fs'
 
-const CACHE_HOME = xdgCache ?? os.tmpdir()
+const CACHE_HOME = xdgCache || os.tmpdir()
 
 const DEFAULT_EXTENSIONS = [
   '.js',
