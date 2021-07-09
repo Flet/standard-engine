@@ -1,4 +1,5 @@
 const eslint = require('eslint')
+const prettier = require('prettier')
 const Linter = require('../').linter
 const path = require('path')
 const test = require('tape')
@@ -8,6 +9,7 @@ function getStandard () {
     cmd: 'pocketlint',
     version: '0.0.0',
     eslint,
+    prettier,
     eslintConfig: require('../tmp/standard/options').eslintConfig
   })
 }
